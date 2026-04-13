@@ -1,0 +1,113 @@
+{
+  "title": "__main__ — CLI entry point (json file → svg file)",
+  "nodes": [
+    {
+      "id": "parse_args",
+      "name": "parse_args",
+      "node_type": "library",
+      "column": 0,
+      "inputs": [
+        {"name": "argv", "type": "list[str]"}
+      ],
+      "outputs": [
+        {"name": "input_path",  "type": "Path"},
+        {"name": "output_path", "type": "Path | None"}
+      ]
+    },
+    {
+      "id": "read_text",
+      "name": "Path.read_text",
+      "node_type": "library",
+      "column": 1,
+      "inputs": [
+        {"name": "input_path", "type": "Path"}
+      ],
+      "outputs": [
+        {"name": "raw_text", "type": "str"}
+      ]
+    },
+    {
+      "id": "resolve_output",
+      "name": "resolve_output_path",
+      "node_type": "function",
+      "column": 1,
+      "inputs": [
+        {"name": "input_path",  "type": "Path"},
+        {"name": "output_path", "type": "Path | None"}
+      ],
+      "outputs": [
+        {"name": "resolved", "type": "Path"}
+      ]
+    },
+    {
+      "id": "json_loads",
+      "name": "json.loads",
+      "node_type": "library",
+      "column": 2,
+      "inputs": [
+        {"name": "raw_text", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "data", "type": "dict"}
+      ]
+    },
+    {
+      "id": "parse_spec",
+      "name": "parse_spec",
+      "node_type": "function",
+      "column": 3,
+      "inputs": [
+        {"name": "data", "type": "dict"}
+      ],
+      "outputs": [
+        {"name": "spec", "type": "DiagramSpec"}
+      ]
+    },
+    {
+      "id": "compute_layout",
+      "name": "compute_layout",
+      "node_type": "function",
+      "column": 4,
+      "inputs": [
+        {"name": "spec", "type": "DiagramSpec"}
+      ],
+      "outputs": [
+        {"name": "layout", "type": "DiagramLayout"}
+      ]
+    },
+    {
+      "id": "render_svg",
+      "name": "render_svg",
+      "node_type": "function",
+      "column": 5,
+      "inputs": [
+        {"name": "layout", "type": "DiagramLayout"}
+      ],
+      "outputs": [
+        {"name": "svg", "type": "str"}
+      ]
+    },
+    {
+      "id": "write_text",
+      "name": "Path.write_text",
+      "node_type": "library",
+      "column": 6,
+      "inputs": [
+        {"name": "resolved", "type": "Path"},
+        {"name": "svg",      "type": "str"}
+      ],
+      "outputs": []
+    }
+  ],
+  "edges": [
+    {"from_node": "parse_args",     "from_port": "input_path",  "to_node": "read_text",      "to_port": "input_path"},
+    {"from_node": "parse_args",     "from_port": "input_path",  "to_node": "resolve_output", "to_port": "input_path"},
+    {"from_node": "parse_args",     "from_port": "output_path", "to_node": "resolve_output", "to_port": "output_path"},
+    {"from_node": "read_text",      "from_port": "raw_text",    "to_node": "json_loads",     "to_port": "raw_text"},
+    {"from_node": "json_loads",     "from_port": "data",        "to_node": "parse_spec",     "to_port": "data"},
+    {"from_node": "parse_spec",     "from_port": "spec",        "to_node": "compute_layout", "to_port": "spec"},
+    {"from_node": "compute_layout", "from_port": "layout",      "to_node": "render_svg",     "to_port": "layout"},
+    {"from_node": "render_svg",     "from_port": "svg",         "to_node": "write_text",     "to_port": "svg"},
+    {"from_node": "resolve_output", "from_port": "resolved",    "to_node": "write_text",     "to_port": "resolved"}
+  ]
+}

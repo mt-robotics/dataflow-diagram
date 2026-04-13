@@ -1,0 +1,185 @@
+{
+  "title": "models — DiagramSpec and DiagramLayout data structures",
+  "nodes": [
+    {
+      "id": "port",
+      "name": "Port",
+      "node_type": "datamodel",
+      "column": 0,
+      "inputs": [
+        {"name": "name",     "type": "str"},
+        {"name": "type",     "type": "str"},
+        {"name": "default",  "type": "str | None",  "default": "None"},
+        {"name": "internal", "type": "bool",        "default": "False"}
+      ],
+      "outputs": [
+        {"name": "port", "type": "Port"}
+      ]
+    },
+    {
+      "id": "exc_port",
+      "name": "ExceptionPort",
+      "node_type": "datamodel",
+      "column": 0,
+      "inputs": [
+        {"name": "name", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "exc", "type": "ExceptionPort"}
+      ]
+    },
+    {
+      "id": "edge_spec",
+      "name": "EdgeSpec",
+      "node_type": "datamodel",
+      "column": 0,
+      "inputs": [
+        {"name": "from_node", "type": "str"},
+        {"name": "from_port", "type": "str"},
+        {"name": "to_node",   "type": "str"},
+        {"name": "to_port",   "type": "str"}
+      ],
+      "outputs": [
+        {"name": "edge", "type": "EdgeSpec"}
+      ]
+    },
+    {
+      "id": "node_spec",
+      "name": "NodeSpec",
+      "node_type": "datamodel",
+      "column": 1,
+      "inputs": [
+        {"name": "id",         "type": "str"},
+        {"name": "name",       "type": "str"},
+        {"name": "column",     "type": "int"},
+        {"name": "node_type",  "type": "str",                 "default": "function"},
+        {"name": "async_fn",   "type": "bool",                "default": "False"},
+        {"name": "inputs",     "type": "list[Port]"},
+        {"name": "outputs",    "type": "list[Port]"},
+        {"name": "exceptions", "type": "list[ExceptionPort]"}
+      ],
+      "outputs": [
+        {"name": "node", "type": "NodeSpec"}
+      ]
+    },
+    {
+      "id": "port_layout",
+      "name": "PortLayout",
+      "node_type": "datamodel",
+      "column": 1,
+      "inputs": [
+        {"name": "port", "type": "Port"},
+        {"name": "cx",   "type": "float"},
+        {"name": "cy",   "type": "float"},
+        {"name": "side", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "pl", "type": "PortLayout"}
+      ]
+    },
+    {
+      "id": "diagram_spec",
+      "name": "DiagramSpec",
+      "node_type": "datamodel",
+      "column": 2,
+      "inputs": [
+        {"name": "title", "type": "str"},
+        {"name": "nodes", "type": "list[NodeSpec]"},
+        {"name": "edges", "type": "list[EdgeSpec]"}
+      ],
+      "outputs": [
+        {"name": "spec", "type": "DiagramSpec"}
+      ]
+    },
+    {
+      "id": "node_layout",
+      "name": "NodeLayout",
+      "node_type": "datamodel",
+      "column": 2,
+      "inputs": [
+        {"name": "spec",             "type": "NodeSpec"},
+        {"name": "x",               "type": "float"},
+        {"name": "y",               "type": "float"},
+        {"name": "width",           "type": "float"},
+        {"name": "height",          "type": "float"},
+        {"name": "input_ports",     "type": "list[PortLayout]"},
+        {"name": "output_ports",    "type": "list[PortLayout]"},
+        {"name": "exception_ports", "type": "list[PortLayout]"}
+      ],
+      "outputs": [
+        {"name": "nl", "type": "NodeLayout"}
+      ]
+    },
+    {
+      "id": "diagram_layout",
+      "name": "DiagramLayout",
+      "node_type": "datamodel",
+      "column": 3,
+      "inputs": [
+        {"name": "spec",          "type": "DiagramSpec"},
+        {"name": "nodes",         "type": "list[NodeLayout]"},
+        {"name": "canvas_width",  "type": "float",  "default": "0"},
+        {"name": "canvas_height", "type": "float",  "default": "0"}
+      ],
+      "outputs": [
+        {"name": "layout", "type": "DiagramLayout"}
+      ]
+    },
+    {
+      "id": "get_node",
+      "name": "get_node",
+      "node_type": "function",
+      "column": 4,
+      "inputs": [
+        {"name": "layout",  "type": "DiagramLayout"},
+        {"name": "node_id", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "node", "type": "NodeLayout | None"}
+      ]
+    },
+    {
+      "id": "get_output_port",
+      "name": "get_output_port",
+      "node_type": "function",
+      "column": 4,
+      "inputs": [
+        {"name": "layout",    "type": "DiagramLayout"},
+        {"name": "node_id",   "type": "str"},
+        {"name": "port_name", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "port", "type": "PortLayout | None"}
+      ]
+    },
+    {
+      "id": "get_input_port",
+      "name": "get_input_port",
+      "node_type": "function",
+      "column": 4,
+      "inputs": [
+        {"name": "layout",    "type": "DiagramLayout"},
+        {"name": "node_id",   "type": "str"},
+        {"name": "port_name", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "port", "type": "PortLayout | None"}
+      ]
+    }
+  ],
+  "edges": [
+    {"from_node": "port",         "from_port": "port", "to_node": "node_spec",     "to_port": "inputs"},
+    {"from_node": "port",         "from_port": "port", "to_node": "node_spec",     "to_port": "outputs"},
+    {"from_node": "port",         "from_port": "port", "to_node": "port_layout",   "to_port": "port"},
+    {"from_node": "exc_port",     "from_port": "exc",  "to_node": "node_spec",     "to_port": "exceptions"},
+    {"from_node": "edge_spec",    "from_port": "edge", "to_node": "diagram_spec",  "to_port": "edges"},
+    {"from_node": "node_spec",    "from_port": "node", "to_node": "diagram_spec",  "to_port": "nodes"},
+    {"from_node": "node_spec",    "from_port": "node", "to_node": "node_layout",   "to_port": "spec"},
+    {"from_node": "port_layout",  "from_port": "pl",   "to_node": "node_layout",   "to_port": "input_ports"},
+    {"from_node": "diagram_spec", "from_port": "spec", "to_node": "diagram_layout","to_port": "spec"},
+    {"from_node": "node_layout",    "from_port": "nl",     "to_node": "diagram_layout", "to_port": "nodes"},
+    {"from_node": "diagram_layout", "from_port": "layout", "to_node": "get_node",        "to_port": "layout"},
+    {"from_node": "diagram_layout", "from_port": "layout", "to_node": "get_output_port", "to_port": "layout"},
+    {"from_node": "diagram_layout", "from_port": "layout", "to_node": "get_input_port",  "to_port": "layout"}
+  ]
+}

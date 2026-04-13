@@ -1,0 +1,101 @@
+{
+  "title": "parse_spec — JSON dict → DiagramSpec (data models + function)",
+  "nodes": [
+    {
+      "id": "port",
+      "name": "Port",
+      "node_type": "datamodel",
+      "column": 0,
+      "inputs": [
+        {"name": "name",     "type": "str"},
+        {"name": "type",     "type": "str"},
+        {"name": "default",  "type": "str | None",  "default": "None"},
+        {"name": "internal", "type": "bool", "default": "False"}
+      ],
+      "outputs": [
+        {"name": "port", "type": "Port"}
+      ]
+    },
+    {
+      "id": "exc_port",
+      "name": "ExceptionPort",
+      "node_type": "datamodel",
+      "column": 0,
+      "inputs": [
+        {"name": "name", "type": "str"}
+      ],
+      "outputs": [
+        {"name": "exc", "type": "ExceptionPort"}
+      ]
+    },
+    {
+      "id": "edge_spec",
+      "name": "EdgeSpec",
+      "node_type": "datamodel",
+      "column": 0,
+      "inputs": [
+        {"name": "from_node", "type": "str"},
+        {"name": "from_port", "type": "str"},
+        {"name": "to_node",   "type": "str"},
+        {"name": "to_port",   "type": "str"}
+      ],
+      "outputs": [
+        {"name": "edge", "type": "EdgeSpec"}
+      ]
+    },
+    {
+      "id": "node_spec",
+      "name": "NodeSpec",
+      "node_type": "datamodel",
+      "column": 1,
+      "inputs": [
+        {"name": "id",         "type": "str"},
+        {"name": "name",       "type": "str"},
+        {"name": "column",     "type": "int"},
+        {"name": "node_type",  "type": "str",              "default": "function"},
+        {"name": "async_fn",   "type": "bool",             "default": "False"},
+        {"name": "inputs",     "type": "list[Port]"},
+        {"name": "outputs",    "type": "list[Port]"},
+        {"name": "exceptions", "type": "list[ExceptionPort]"}
+      ],
+      "outputs": [
+        {"name": "node", "type": "NodeSpec"}
+      ]
+    },
+    {
+      "id": "diagram_spec",
+      "name": "DiagramSpec",
+      "node_type": "datamodel",
+      "column": 2,
+      "inputs": [
+        {"name": "title",  "type": "str"},
+        {"name": "nodes",  "type": "list[NodeSpec]"},
+        {"name": "edges",  "type": "list[EdgeSpec]"}
+      ],
+      "outputs": [
+        {"name": "spec", "type": "DiagramSpec"}
+      ]
+    },
+    {
+      "id": "parse_spec",
+      "name": "parse_spec",
+      "node_type": "function",
+      "column": 3,
+      "inputs": [
+        {"name": "data", "type": "dict"},
+        {"name": "spec", "type": "DiagramSpec", "internal": true}
+      ],
+      "outputs": [
+        {"name": "spec", "type": "DiagramSpec"}
+      ]
+    }
+  ],
+  "edges": [
+    {"from_node": "port",         "from_port": "port", "to_node": "node_spec",    "to_port": "inputs"},
+    {"from_node": "port",         "from_port": "port", "to_node": "node_spec",    "to_port": "outputs"},
+    {"from_node": "exc_port",     "from_port": "exc",  "to_node": "node_spec",    "to_port": "exceptions"},
+    {"from_node": "node_spec",    "from_port": "node", "to_node": "diagram_spec", "to_port": "nodes"},
+    {"from_node": "edge_spec",    "from_port": "edge", "to_node": "diagram_spec", "to_port": "edges"},
+    {"from_node": "diagram_spec", "from_port": "spec", "to_node": "parse_spec",   "to_port": "spec"}
+  ]
+}

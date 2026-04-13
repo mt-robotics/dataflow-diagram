@@ -1,0 +1,110 @@
+{
+  "title": "render_svg — DiagramLayout → SVG string",
+  "nodes": [
+    {
+      "id": "card_layout_const",
+      "name": "Card Layout Constants",
+      "node_type": "config",
+      "column": 0,
+      "inputs": [
+        {"name": "PORT_RADIUS",      "type": "int",  "default": "6"},
+        {"name": "TITLE_HEIGHT",     "type": "int",  "default": "36"},
+        {"name": "CARD_PADDING_TOP", "type": "int",  "default": "12"},
+        {"name": "PORT_ROW_HEIGHT",  "type": "int",  "default": "28"}
+      ],
+      "outputs": [
+        {"name": "layout_const", "type": ""}
+      ]
+    },
+    {
+      "id": "renderer_colors",
+      "name": "Renderer Color Palette",
+      "node_type": "config",
+      "column": 0,
+      "inputs": [
+        {"name": "C_CANVAS",        "type": "str",  "default": "#0f172a"},
+        {"name": "C_CARD",          "type": "str",  "default": "#1e293b"},
+        {"name": "C_TITLE_FN",      "type": "str",  "default": "#3b82f6"},
+        {"name": "C_TITLE_DM",      "type": "str",  "default": "#7c3aed"},
+        {"name": "C_TITLE_CFG",     "type": "str",  "default": "#0d9488"},
+        {"name": "C_INPUT_DOT",     "type": "str",  "default": "#3b82f6"},
+        {"name": "C_OUTPUT_DOT",    "type": "str",  "default": "#10b981"},
+        {"name": "C_INTERNAL_DOT",  "type": "str",  "default": "#C19552"},
+        {"name": "C_EXCEPTION_DOT", "type": "str",  "default": "#dc2626"},
+        {"name": "C_EDGE",          "type": "str",  "default": "#64748b"},
+        {"name": "C_TITLE_LIB",    "type": "str",  "default": "#ea580c"}
+      ],
+      "outputs": [
+        {"name": "colors", "type": ""}
+      ]
+    },
+    {
+      "id": "defs",
+      "name": "_defs",
+      "node_type": "function",
+      "column": 1,
+      "inputs": [
+        {"name": "colors", "type": "", "internal": true}
+      ],
+      "outputs": [
+        {"name": "defs_lines", "type": "list[str]"}
+      ]
+    },
+    {
+      "id": "edge_fn",
+      "name": "_edge",
+      "node_type": "function",
+      "column": 1,
+      "inputs": [
+        {"name": "x1",     "type": "float"},
+        {"name": "y1",     "type": "float"},
+        {"name": "x2",     "type": "float"},
+        {"name": "y2",     "type": "float"},
+        {"name": "colors", "type": "", "internal": true}
+      ],
+      "outputs": [
+        {"name": "path_str", "type": "str"}
+      ]
+    },
+    {
+      "id": "node_card",
+      "name": "_node_card",
+      "node_type": "function",
+      "column": 1,
+      "inputs": [
+        {"name": "nl",           "type": "NodeLayout"},
+        {"name": "layout_const", "type": "", "internal": true},
+        {"name": "colors",       "type": "",     "internal": true}
+      ],
+      "outputs": [
+        {"name": "card_lines", "type": "list[str]"}
+      ]
+    },
+    {
+      "id": "render_svg",
+      "name": "render_svg",
+      "node_type": "function",
+      "column": 2,
+      "inputs": [
+        {"name": "layout",     "type": "DiagramLayout"},
+        {"name": "defs_lines", "type": "list[str]",   "internal": true},
+        {"name": "path_str",   "type": "str",         "internal": true},
+        {"name": "card_lines", "type": "list[str]",   "internal": true},
+        {"name": "colors",     "type": "",      "internal": true}
+      ],
+      "outputs": [
+        {"name": "svg", "type": "str"}
+      ]
+    }
+  ],
+  "edges": [
+    {"from_node": "card_layout_const", "from_port": "layout_const", "to_node": "node_card",  "to_port": "layout_const"},
+    {"from_node": "renderer_colors",   "from_port": "colors",       "to_node": "defs",       "to_port": "colors"},
+    {"from_node": "renderer_colors",   "from_port": "colors",       "to_node": "edge_fn",    "to_port": "colors"},
+    {"from_node": "renderer_colors",   "from_port": "colors",       "to_node": "node_card",  "to_port": "colors"},
+    {"from_node": "renderer_colors",   "from_port": "colors",       "to_node": "render_svg", "to_port": "colors"},
+    {"from_node": "defs",              "from_port": "defs_lines",   "to_node": "render_svg", "to_port": "defs_lines"},
+    {"from_node": "edge_fn",           "from_port": "path_str",     "to_node": "render_svg", "to_port": "path_str"},
+    {"from_node": "node_card",         "from_port": "card_lines",   "to_node": "render_svg", "to_port": "card_lines"}
+  ]
+}

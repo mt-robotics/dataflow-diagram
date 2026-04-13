@@ -1,0 +1,21 @@
+[project]
+name = "dataflow-diagram"
+version = "0.1.0"
+description = "Generate SVG dataflow diagrams from JSON specs"
+requires-python = ">=3.11"
+dependencies = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.mypy]
+explicit_package_bases = true
+no_site_packages = true
+
+[dependency-groups]
+dev = [
+    "mypy>=1.20.0",
+    "pre-commit>=4.5.1",
+    "ruff>=0.15.10",
+]

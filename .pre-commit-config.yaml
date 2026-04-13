@@ -1,0 +1,22 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check dataflow_diagram --fix
+        language: system
+        types: [python]
+        stages: [pre-commit]
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format dataflow_diagram/
+        language: system
+        types: [python]
+        stages: [pre-commit]
+      - id: mypy
+        name: mypy
+        entry: uv run mypy dataflow_diagram/
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-commit]

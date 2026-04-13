@@ -1,0 +1,86 @@
+{
+  "title": "compute_layout — DiagramSpec → DiagramLayout (x/y coordinates)",
+  "nodes": [
+    {
+      "id": "card_constants",
+      "name": "Card Sizing Constants",
+      "node_type": "config",
+      "column": 0,
+      "inputs": [
+        {"name": "TITLE_HEIGHT",     "type": "int",  "default": "36"},
+        {"name": "PORT_ROW_HEIGHT",  "type": "int",  "default": "28"},
+        {"name": "CARD_PADDING_TOP", "type": "int",  "default": "12"},
+        {"name": "CARD_PADDING_BTM", "type": "int",  "default": "12"},
+        {"name": "PORT_RADIUS",      "type": "int",  "default": "6"},
+        {"name": "CHAR_WIDTH_EST",   "type": "int",  "default": "7"}
+      ],
+      "outputs": [
+        {"name": "sizing", "type": ""}
+      ]
+    },
+    {
+      "id": "canvas_constants",
+      "name": "Canvas Layout Constants",
+      "node_type": "config",
+      "column": 0,
+      "inputs": [
+        {"name": "COLUMN_GAP",      "type": "int",  "default": "140"},
+        {"name": "COLUMN_MARGIN_X", "type": "int",  "default": "60"},
+        {"name": "ROW_GAP",         "type": "int",  "default": "40"},
+        {"name": "ROW_MARGIN_Y",    "type": "int",  "default": "60"},
+        {"name": "CANVAS_PADDING",  "type": "int",  "default": "40"}
+      ],
+      "outputs": [
+        {"name": "spacing", "type": ""}
+      ]
+    },
+    {
+      "id": "card_width",
+      "name": "_card_width",
+      "node_type": "function",
+      "column": 1,
+      "inputs": [
+        {"name": "node",   "type": "NodeSpec"},
+        {"name": "sizing", "type": "",  "internal": true}
+      ],
+      "outputs": [
+        {"name": "width", "type": "float"}
+      ]
+    },
+    {
+      "id": "card_height",
+      "name": "_card_height",
+      "node_type": "function",
+      "column": 1,
+      "inputs": [
+        {"name": "num_rows", "type": "int"},
+        {"name": "sizing",   "type": "",  "internal": true}
+      ],
+      "outputs": [
+        {"name": "height", "type": "float"}
+      ]
+    },
+    {
+      "id": "compute_layout",
+      "name": "compute_layout",
+      "node_type": "function",
+      "column": 2,
+      "inputs": [
+        {"name": "spec",    "type": "DiagramSpec"},
+        {"name": "width",   "type": "float",        "internal": true},
+        {"name": "height",  "type": "float",        "internal": true},
+        {"name": "spacing", "type": "",  "internal": true}
+      ],
+      "outputs": [
+        {"name": "layout", "type": "DiagramLayout"}
+      ]
+    }
+  ],
+  "edges": [
+    {"from_node": "card_constants",   "from_port": "sizing",  "to_node": "card_width",     "to_port": "sizing"},
+    {"from_node": "card_constants",   "from_port": "sizing",  "to_node": "card_height",    "to_port": "sizing"},
+    {"from_node": "canvas_constants", "from_port": "spacing", "to_node": "compute_layout", "to_port": "spacing"},
+    {"from_node": "card_width",       "from_port": "width",   "to_node": "compute_layout", "to_port": "width"},
+    {"from_node": "card_height",      "from_port": "height",  "to_node": "compute_layout", "to_port": "height"}
+  ]
+}
