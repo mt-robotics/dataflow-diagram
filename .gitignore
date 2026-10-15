@@ -83,3 +83,4 @@ archive/*
 
 # ── Example / learning files (not production code) ─────────────────────────────
 *_examples.py
+/archive
